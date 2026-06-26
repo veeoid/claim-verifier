@@ -2,21 +2,35 @@ import "@tailwindplus/elements";
 
 export default function Navbar() {
 	return (
-		<header className="bg-gray-900">
+		<header className="bg-gray-900 border-b border-gray-700 [box-shadow:0_4px_24px_rgba(99,102,241,0.2)]">
 			<nav
 				aria-label="Global"
 				className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
 			>
+				{/* Logo */}
 				<div className="flex lg:flex-1">
-					<a href="#" className="-m-1.5 p-1.5">
-						<span className="sr-only">Your Company</span>
-						<img
-							src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
-							alt=""
-							className="h-8 w-auto"
-						/>
+					<a href="/" className="-m-1.5 flex items-center gap-x-2.5 p-1.5">
+						<svg
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							strokeWidth="1.5"
+							aria-hidden="true"
+							className="size-8 text-indigo-400"
+						>
+							<path
+								d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z"
+								strokeLinecap="round"
+								strokeLinejoin="round"
+							/>
+						</svg>
+						<span className="text-sm font-semibold text-white">
+							ClaimVerifier
+						</span>
 					</a>
 				</div>
+
+				{/* Mobile menu button */}
 				<div className="flex lg:hidden">
 					<button
 						type="button"
@@ -29,265 +43,89 @@ export default function Navbar() {
 							viewBox="0 0 24 24"
 							fill="none"
 							stroke="currentColor"
-							stroke-width="1.5"
+							strokeWidth="1.5"
 							data-slot="icon"
 							aria-hidden="true"
 							className="size-6"
 						>
 							<path
 								d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-								stroke-linecap="round"
-								stroke-linejoin="round"
+								strokeLinecap="round"
+								strokeLinejoin="round"
 							/>
 						</svg>
 					</button>
 				</div>
-				<el-popover-group className="hidden lg:flex lg:gap-x-12">
-					<div className="relative">
-						<button
-							popovertarget="desktop-menu-product"
-							className="flex items-center gap-x-1 text-sm/6 font-semibold text-white"
-						>
-							Product
-							<svg
-								viewBox="0 0 20 20"
-								fill="currentColor"
-								data-slot="icon"
-								aria-hidden="true"
-								className="size-5 flex-none text-gray-500"
-							>
-								<path
-									d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
-									clip-rule="evenodd"
-									fill-rule="evenodd"
-								/>
-							</svg>
-						</button>
 
-						<el-popover
-							id="desktop-menu-product"
-							popover="auto"
-							anchor="bottom"
-							className="w-screen max-w-md overflow-hidden rounded-3xl bg-gray-800 outline-1 -outline-offset-1 outline-white/10 transition transition-discrete [--anchor-gap:--spacing(3)] backdrop:bg-transparent open:block data-closed:translate-y-1 data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in"
-						>
-							<div className="p-4">
-								<div className="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm/6 hover:bg-white/5">
-									<div className="flex size-11 flex-none items-center justify-center rounded-lg bg-gray-700/50 group-hover:bg-gray-700">
-										<svg
-											viewBox="0 0 24 24"
-											fill="none"
-											stroke="currentColor"
-											stroke-width="1.5"
-											data-slot="icon"
-											aria-hidden="true"
-											className="size-6 text-gray-400 group-hover:text-white"
-										>
-											<path
-												d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z"
-												stroke-linecap="round"
-												stroke-linejoin="round"
-											/>
-											<path
-												d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z"
-												stroke-linecap="round"
-												stroke-linejoin="round"
-											/>
-										</svg>
-									</div>
-									<div className="flex-auto">
-										<a href="#" className="block font-semibold text-white">
-											Analytics
-											<span className="absolute inset-0"></span>
-										</a>
-										<p className="mt-1 text-gray-400">
-											Get a better understanding of your traffic
-										</p>
-									</div>
-								</div>
-								<div className="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm/6 hover:bg-white/5">
-									<div className="flex size-11 flex-none items-center justify-center rounded-lg bg-gray-700/50 group-hover:bg-gray-700">
-										<svg
-											viewBox="0 0 24 24"
-											fill="none"
-											stroke="currentColor"
-											stroke-width="1.5"
-											data-slot="icon"
-											aria-hidden="true"
-											className="size-6 text-gray-400 group-hover:text-white"
-										>
-											<path
-												d="M15.042 21.672 13.684 16.6m0 0-2.51 2.225.569-9.47 5.227 7.917-3.286-.672ZM12 2.25V4.5m5.834.166-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243-1.59-1.59"
-												stroke-linecap="round"
-												stroke-linejoin="round"
-											/>
-										</svg>
-									</div>
-									<div className="flex-auto">
-										<a href="#" className="block font-semibold text-white">
-											Engagement
-											<span className="absolute inset-0"></span>
-										</a>
-										<p className="mt-1 text-gray-400">
-											Speak directly to your customers
-										</p>
-									</div>
-								</div>
-								<div className="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm/6 hover:bg-white/5">
-									<div className="flex size-11 flex-none items-center justify-center rounded-lg bg-gray-700/50 group-hover:bg-gray-700">
-										<svg
-											viewBox="0 0 24 24"
-											fill="none"
-											stroke="currentColor"
-											stroke-width="1.5"
-											data-slot="icon"
-											aria-hidden="true"
-											className="size-6 text-gray-400 group-hover:text-white"
-										>
-											<path
-												d="M7.864 4.243A7.5 7.5 0 0 1 19.5 10.5c0 2.92-.556 5.709-1.568 8.268M5.742 6.364A7.465 7.465 0 0 0 4.5 10.5a7.464 7.464 0 0 1-1.15 3.993m1.989 3.559A11.209 11.209 0 0 0 8.25 10.5a3.75 3.75 0 1 1 7.5 0c0 .527-.021 1.049-.064 1.565M12 10.5a14.94 14.94 0 0 1-3.6 9.75m6.633-4.596a18.666 18.666 0 0 1-2.485 5.33"
-												stroke-linecap="round"
-												stroke-linejoin="round"
-											/>
-										</svg>
-									</div>
-									<div className="flex-auto">
-										<a href="#" className="block font-semibold text-white">
-											Security
-											<span className="absolute inset-0"></span>
-										</a>
-										<p className="mt-1 text-gray-400">
-											Your customers’ data will be safe and secure
-										</p>
-									</div>
-								</div>
-								<div className="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm/6 hover:bg-white/5">
-									<div className="flex size-11 flex-none items-center justify-center rounded-lg bg-gray-700/50 group-hover:bg-gray-700">
-										<svg
-											viewBox="0 0 24 24"
-											fill="none"
-											stroke="currentColor"
-											stroke-width="1.5"
-											data-slot="icon"
-											aria-hidden="true"
-											className="size-6 text-gray-400 group-hover:text-white"
-										>
-											<path
-												d="M13.5 16.875h3.375m0 0h3.375m-3.375 0V13.5m0 3.375v3.375M6 10.5h2.25a2.25 2.25 0 0 0 2.25-2.25V6a2.25 2.25 0 0 0-2.25-2.25H6A2.25 2.25 0 0 0 3.75 6v2.25A2.25 2.25 0 0 0 6 10.5Zm0 9.75h2.25A2.25 2.25 0 0 0 10.5 18v-2.25a2.25 2.25 0 0 0-2.25-2.25H6a2.25 2.25 0 0 0-2.25 2.25V18A2.25 2.25 0 0 0 6 20.25Zm9.75-9.75H18a2.25 2.25 0 0 0 2.25-2.25V6A2.25 2.25 0 0 0 18 3.75h-2.25A2.25 2.25 0 0 0 13.5 6v2.25a2.25 2.25 0 0 0 2.25 2.25Z"
-												stroke-linecap="round"
-												stroke-linejoin="round"
-											/>
-										</svg>
-									</div>
-									<div className="flex-auto">
-										<a href="#" className="block font-semibold text-white">
-											Integrations
-											<span className="absolute inset-0"></span>
-										</a>
-										<p className="mt-1 text-gray-400">
-											Connect with third-party tools
-										</p>
-									</div>
-								</div>
-								<div className="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm/6 hover:bg-white/5">
-									<div className="flex size-11 flex-none items-center justify-center rounded-lg bg-gray-700/50 group-hover:bg-gray-700">
-										<svg
-											viewBox="0 0 24 24"
-											fill="none"
-											stroke="currentColor"
-											stroke-width="1.5"
-											data-slot="icon"
-											aria-hidden="true"
-											className="size-6 text-gray-400 group-hover:text-white"
-										>
-											<path
-												d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
-												stroke-linecap="round"
-												stroke-linejoin="round"
-											/>
-										</svg>
-									</div>
-									<div className="flex-auto">
-										<a href="#" className="block font-semibold text-white">
-											Automations
-											<span className="absolute inset-0"></span>
-										</a>
-										<p className="mt-1 text-gray-400">
-											Build strategic funnels that will convert
-										</p>
-									</div>
-								</div>
-							</div>
-							<div className="grid grid-cols-2 divide-x divide-white/10 bg-gray-700/50">
-								<a
-									href="#"
-									className="flex items-center justify-center gap-x-2.5 p-3 text-sm/6 font-semibold text-white hover:bg-gray-700/50"
-								>
-									<svg
-										viewBox="0 0 20 20"
-										fill="currentColor"
-										data-slot="icon"
-										aria-hidden="true"
-										className="size-5 flex-none text-gray-500"
-									>
-										<path
-											d="M2 10a8 8 0 1 1 16 0 8 8 0 0 1-16 0Zm6.39-2.908a.75.75 0 0 1 .766.027l3.5 2.25a.75.75 0 0 1 0 1.262l-3.5 2.25A.75.75 0 0 1 8 12.25v-4.5a.75.75 0 0 1 .39-.658Z"
-											clip-rule="evenodd"
-											fill-rule="evenodd"
-										/>
-									</svg>
-									Watch demo
-								</a>
-								<a
-									href="#"
-									className="flex items-center justify-center gap-x-2.5 p-3 text-sm/6 font-semibold text-white hover:bg-gray-700/50"
-								>
-									<svg
-										viewBox="0 0 20 20"
-										fill="currentColor"
-										data-slot="icon"
-										aria-hidden="true"
-										className="size-5 flex-none text-gray-500"
-									>
-										<path
-											d="M2 3.5A1.5 1.5 0 0 1 3.5 2h1.148a1.5 1.5 0 0 1 1.465 1.175l.716 3.223a1.5 1.5 0 0 1-1.052 1.767l-.933.267c-.41.117-.643.555-.48.95a11.542 11.542 0 0 0 6.254 6.254c.395.163.833-.07.95-.48l.267-.933a1.5 1.5 0 0 1 1.767-1.052l3.223.716A1.5 1.5 0 0 1 18 15.352V16.5a1.5 1.5 0 0 1-1.5 1.5H15c-1.149 0-2.263-.15-3.326-.43A13.022 13.022 0 0 1 2.43 8.326 13.019 13.019 0 0 1 2 5V3.5Z"
-											clip-rule="evenodd"
-											fill-rule="evenodd"
-										/>
-									</svg>
-									Contact sales
-								</a>
-							</div>
-						</el-popover>
-					</div>
+				{/* Desktop nav links */}
+				<div className="hidden lg:flex lg:gap-x-10">
+					<a href="/dashboard" className="text-sm/6 font-semibold text-white">
+						Dashboard
+					</a>
+					<a
+						href="#"
+						className="text-sm/6 font-semibold text-gray-300 hover:text-white"
+					>
+						Submit Claim
+					</a>
+					<a
+						href="#"
+						className="text-sm/6 font-semibold text-gray-300 hover:text-white"
+					>
+						History
+					</a>
+					<a
+						href="#"
+						className="text-sm/6 font-semibold text-gray-300 hover:text-white"
+					>
+						Reports
+					</a>
+				</div>
 
-					<a href="#" className="text-sm/6 font-semibold text-white">
-						Features
+				{/* Desktop right side */}
+				<div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:gap-x-6">
+					<a
+						href="/login"
+						className="text-sm/6 font-semibold text-gray-300 hover:text-white"
+					>
+						Log in
 					</a>
-					<a href="#" className="text-sm/6 font-semibold text-white">
-						Marketplace
-					</a>
-					<a href="#" className="text-sm/6 font-semibold text-white">
-						Company
-					</a>
-				</el-popover-group>
-				<div className="hidden lg:flex lg:flex-1 lg:justify-end">
-					<a href="#" className="text-sm/6 font-semibold text-white">
-						Log in <span aria-hidden="true">&rarr;</span>
+					<a
+						href="#"
+						className="rounded-md bg-indigo-500 px-3.5 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400"
+					>
+						Get started
 					</a>
 				</div>
 			</nav>
+
+			{/* Mobile menu */}
 			<el-dialog>
 				<dialog id="mobile-menu" className="backdrop:bg-transparent lg:hidden">
 					<div tabIndex={0} className="fixed inset-0 focus:outline-none">
-						<el-dialog-panel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-gray-900 p-6 sm:max-w-sm sm:ring-1 sm:ring-gray-100/10">
+						<el-dialog-panel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-gray-900 p-6 sm:max-w-sm sm:ring-1 sm:ring-white/10">
 							<div className="flex items-center justify-between">
-								<a href="#" className="-m-1.5 p-1.5">
-									<span className="sr-only">Your Company</span>
-									<img
-										src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
-										alt=""
-										className="h-8 w-auto"
-									/>
+								<a
+									href="/"
+									className="-m-1.5 flex items-center gap-x-2.5 p-1.5"
+								>
+									<svg
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										strokeWidth="1.5"
+										aria-hidden="true"
+										className="size-8 text-indigo-400"
+									>
+										<path
+											d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z"
+											strokeLinecap="round"
+											strokeLinejoin="round"
+										/>
+									</svg>
+									<span className="text-sm font-semibold text-white">
+										ClaimVerifier
+									</span>
 								</a>
 								<button
 									type="button"
@@ -300,15 +138,15 @@ export default function Navbar() {
 										viewBox="0 0 24 24"
 										fill="none"
 										stroke="currentColor"
-										stroke-width="1.5"
+										strokeWidth="1.5"
 										data-slot="icon"
 										aria-hidden="true"
 										className="size-6"
 									>
 										<path
 											d="M6 18 18 6M6 6l12 12"
-											stroke-linecap="round"
-											stroke-linejoin="round"
+											strokeLinecap="round"
+											strokeLinejoin="round"
 										/>
 									</svg>
 								</button>
@@ -316,96 +154,43 @@ export default function Navbar() {
 							<div className="mt-6 flow-root">
 								<div className="-my-6 divide-y divide-white/10">
 									<div className="space-y-2 py-6">
-										<div className="-mx-3">
-											<button
-												type="button"
-												command="--toggle"
-												commandfor="products"
-												className="flex w-full items-center justify-between rounded-lg py-2 pr-3.5 pl-3 text-base/7 font-semibold text-white hover:bg-white/5"
-											>
-												Product
-												<svg
-													viewBox="0 0 20 20"
-													fill="currentColor"
-													data-slot="icon"
-													aria-hidden="true"
-													className="size-5 flex-none in-aria-expanded:rotate-180"
-												>
-													<path
-														d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
-														clip-rule="evenodd"
-														fill-rule="evenodd"
-													/>
-												</svg>
-											</button>
-											<el-disclosure
-												id="products"
-												hidden
-												className="mt-2 block space-y-2"
-											>
-												<a
-													href="#"
-													className="block rounded-lg py-2 pr-3 pl-6 text-sm/7 font-semibold text-white hover:bg-white/5"
-												>
-													Analytics
-												</a>
-												<a
-													href="#"
-													className="block rounded-lg py-2 pr-3 pl-6 text-sm/7 font-semibold text-white hover:bg-white/5"
-												>
-													Engagement
-												</a>
-												<a
-													href="#"
-													className="block rounded-lg py-2 pr-3 pl-6 text-sm/7 font-semibold text-white hover:bg-white/5"
-												>
-													Security
-												</a>
-												<a
-													href="#"
-													className="block rounded-lg py-2 pr-3 pl-6 text-sm/7 font-semibold text-white hover:bg-white/5"
-												>
-													Integrations
-												</a>
-												<a
-													href="#"
-													className="block rounded-lg py-2 pr-3 pl-6 text-sm/7 font-semibold text-white hover:bg-white/5"
-												>
-													Automations
-												</a>
-												<a
-													href="#"
-													className="block rounded-lg py-2 pr-3 pl-6 text-sm/7 font-semibold text-white hover:bg-white/5"
-												>
-													Contact sales
-												</a>
-											</el-disclosure>
-										</div>
 										<a
-											href="#"
+											href="/dashboard"
 											className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-white hover:bg-white/5"
 										>
-											Features
+											Dashboard
 										</a>
 										<a
 											href="#"
-											className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-white hover:bg-white/5"
+											className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-300 hover:bg-white/5 hover:text-white"
 										>
-											Marketplace
+											Submit Claim
 										</a>
 										<a
 											href="#"
-											className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-white hover:bg-white/5"
+											className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-300 hover:bg-white/5 hover:text-white"
 										>
-											Company
+											History
+										</a>
+										<a
+											href="#"
+											className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-300 hover:bg-white/5 hover:text-white"
+										>
+											Reports
 										</a>
 									</div>
-									<div className="py-6">
+									<div className="py-6 space-y-3">
 										<a
-											href="#"
-											className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-white hover:bg-white/5"
+											href="/login"
+											className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-300 hover:bg-white/5 hover:text-white"
 										>
 											Log in
+										</a>
+										<a
+											href="#"
+											className="-mx-3 block rounded-lg bg-indigo-500 px-3 py-2.5 text-center text-base/7 font-semibold text-white hover:bg-indigo-400"
+										>
+											Get started
 										</a>
 									</div>
 								</div>
