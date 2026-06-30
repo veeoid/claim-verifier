@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using ClaimVerifier.Api.Models.Dtos;
 using ClaimVerifier.Api.Services;
 
@@ -31,12 +32,12 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginRequest request)
     {
-        var success = await _authService.Login(request);
-        if (!success)
+        var token = await _authService.Login(request);
+        if (token == null)
         {
-            return Unauthorized();
+            return Unauthorized(new { message = "Invalid email or password." });
         }
-        return Ok();
+        return Ok(new { token });
     }
 
     [HttpPost("logout")]
@@ -44,5 +45,15 @@ public class AuthController : ControllerBase
     {
         // Implementation for logout
         return Ok(new {});
+    }
+
+
+    [Authorize]
+    [HttpGet("me")]
+    public IActionResult Me()
+    {
+        var email = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        return Ok(new { userId, email });
     }
 }

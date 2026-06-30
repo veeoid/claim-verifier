@@ -5,5 +5,5 @@ namespace ClaimVerifier.Api.Services;
 public interface IAuthService
 {
     Task<bool> Register(RegisterRequest request);
-    Task<bool> Login(LoginRequest request);
+    Task<string?> Login(LoginRequest request);
 }

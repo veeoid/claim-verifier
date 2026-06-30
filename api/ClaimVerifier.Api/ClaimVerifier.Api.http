@@ -1,0 +1,14 @@
+@host = http://localhost:5076
+
+### login to get a token
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "vismay",
+  "password": "123"
+}
+
+### call the protected endpoint with the token
+GET {{host}}/api/auth/me
+Authorization: Bearer PASTE_TOKEN_HERE

@@ -12,9 +12,11 @@ public class AuthService : IAuthService
     private readonly AppDbContext _db;
     private readonly PasswordHasher<User> _hasher = new();
 
-    public AuthService(AppDbContext db)
+    private readonly ITokenService _tokenService;
+    public AuthService(AppDbContext db, ITokenService tokenService)
     {
         _db = db;
+        _tokenService = tokenService;
     }
 
     public async Task<bool> Register(RegisterRequest request)
@@ -30,22 +32,16 @@ public class AuthService : IAuthService
         return true;
     }
 
-    public async Task<bool> Login(LoginRequest request)
+    public async Task<string?> Login(LoginRequest request)
     {
         var user = await _db.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
-        if (user == null) return false;
+        if (user == null) return null;
 
         var result = _hasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
-        return result == PasswordVerificationResult.Success;
+        if (result != PasswordVerificationResult.Success) return null;
+
+        return _tokenService.CreateToken(user);
     }
 
-    public Task<bool> RegisterAsync(RegisterRequest request)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<bool> LoginAsync(LoginRequest request)
-    {
-        throw new NotImplementedException();
-    }
+    
 }
