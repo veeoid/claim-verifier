@@ -1,0 +1,55 @@
+@baseUrl = http://localhost:5076
+
+### 1. Register a user
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "Password123!"
+}
+
+### 2. Login — sets the cookie
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "Password123!"
+}
+
+### 3. Confirm the session
+GET {{baseUrl}}/api/auth/me
+
+### 4. List claims — should work today, even with zero claims
+GET {{baseUrl}}/api/claims
+
+### 5. Get one claim by id — expect 404 if none exist yet
+GET {{baseUrl}}/api/claims/1
+
+### 6. Create a claim — will only work once ClaimService + IClaimAnalysisService are wired
+POST {{baseUrl}}/api/claims
+Content-Type: multipart/form-data; boundary=----boundary
+
+------boundary
+Content-Disposition: form-data; name="description"
+
+Front bumper scratch, happened overnight in the parking lot
+------boundary
+Content-Disposition: form-data; name="claimObject"
+
+car
+------boundary
+Content-Disposition: form-data; name="photos"; filename="photo1.jpg"
+Content-Type: image/jpeg
+
+< ./test-files/photo1.jpg
+------boundary
+Content-Disposition: form-data; name="photos"; filename="photo2.jpg"
+Content-Type: image/jpeg
+
+< ./test-files/photo2.jpg
+------boundary--
+
+### 7. List claims again — should now include the one just created
+GET {{baseUrl}}/api/claims

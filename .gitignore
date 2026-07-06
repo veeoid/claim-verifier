@@ -1,0 +1,30 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.csv
+
+# .NET / C#
+bin/
+obj/
+*.user
+*.suo
+*.vs/
+.vs/
+*.nupkg
+*.snupkg
+appsettings.Development.json
+appsettings.*.json
+!appsettings.json
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+tsconfig.tsbuildinfo
+
+# Misc
+.env
+.env.*
+cache/
+.DS_Store
