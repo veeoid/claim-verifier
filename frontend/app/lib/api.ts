@@ -9,13 +9,16 @@ class ApiError extends Error {
 }
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+	// Let the browser set the Content-Type (with boundary) for FormData bodies
+	const headers: HeadersInit =
+		options.body instanceof FormData
+			? { ...options.headers }
+			: { "Content-Type": "application/json", ...options.headers };
+
 	const res = await fetch(`${API_URL}${path}`, {
 		...options,
 		credentials: "include",
-		headers: {
-			"Content-Type": "application/json",
-			...options.headers,
-		},
+		headers,
 	});
 
 	if (!res.ok) {
@@ -48,12 +51,27 @@ export type ClaimRequest = {
 	photos: File[];
 };
 
+export type ClaimImageResponse = {
+	id: number;
+	fileName?: string;
+	url?: string;
+};
+
 export type ClaimResponse = {
 	id: number;
 	description: string;
 	claimObject: string;
 	status: string;
+	severity: string | null;
 	createdAt: string;
+	evidenceStandardMet: boolean | null;
+	evidenceStandardMetReason: string | null;
+	riskFlags: string | null;
+	issueType: string | null;
+	objectPart: string | null;
+	claimStatusJustification: string | null;
+	validImage: boolean | null;
+	images: ClaimImageResponse[];
 };
 
 export const api = {
@@ -77,6 +95,19 @@ export const api = {
 		request<ClaimResponse[]>("/api/claims", {
 			method: "GET",
 		}),
+
+	createClaim: ({ description, claimObject, photos }: ClaimRequest) => {
+		const form = new FormData();
+		form.append("description", description);
+		form.append("claimObject", claimObject);
+		for (const photo of photos) {
+			form.append("photos", photo);
+		}
+		return request<ClaimResponse>("/api/claims", {
+			method: "POST",
+			body: form,
+		});
+	},
 };
 
 export { ApiError };

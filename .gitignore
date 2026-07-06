@@ -28,3 +28,6 @@ tsconfig.tsbuildinfo
 .env.*
 cache/
 .DS_Store
+
+# Uploaded images
+/api/ClaimVerifier.Api/wwwroot/
