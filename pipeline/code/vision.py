@@ -103,7 +103,9 @@ def analyze_claim_gemini(
     return perception
 
 
-def analyze_claim_groq(claim, images, requirement_texts, model="meta-llama/llama-4-scout-17b-16e-instruct"):
+def analyze_claim_groq(
+    claim, images, requirement_texts, model="meta-llama/llama-4-scout-17b-16e-instruct"
+):
     cached = get_cached(images)
     if cached is not None:
         return cached
@@ -138,7 +140,9 @@ def analyze_claim_groq(claim, images, requirement_texts, model="meta-llama/llama
             save_cache(images, perception)
             return perception
         except Exception as e:
-            print(f"[vision] attempt {attempt+1} failed for {[i['image_id'] for i in images]}: {e}")
+            print(
+                f"[vision] attempt {attempt + 1} failed for {[i['image_id'] for i in images]}: {e}"
+            )
             if attempt < 3:
                 time.sleep(2**attempt * 5)
                 continue
@@ -156,6 +160,7 @@ def _load_image_b64(path):
     # Anything else (AVIF, WebP, etc.) — convert to JPEG via Pillow.
     from io import BytesIO
     from PIL import Image
+
     img = Image.open(BytesIO(raw)).convert("RGB")
     buf = BytesIO()
     img.save(buf, format="JPEG", quality=90)

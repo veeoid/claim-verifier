@@ -31,3 +31,5 @@ cache/
 
 # Uploaded images
 /api/ClaimVerifier.Api/wwwroot/
+
+pipeline/venv/

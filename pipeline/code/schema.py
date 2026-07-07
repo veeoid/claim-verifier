@@ -1,4 +1,4 @@
-SEVERITY_RANK = {"none": 0, "low": 1, "medium": 2, "high": 3}
+SEVERITY_RANK = {"none": 0, "unknown": 1, "low": 2, "medium": 3, "high": 4}
 
 CLAIM_STATUS = {"supported", "contradicted", "not_enough_information"}
 
