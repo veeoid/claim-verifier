@@ -1,6 +1,6 @@
 # Claim Verifier — Code
 
-Multi-modal damage claim verification system for HackerRank Orchestrate (June 2026).
+Multi-modal damage claim verification system
 
 ## How it works
 
@@ -53,16 +53,16 @@ Prints per-column accuracy and risk-flag precision/recall/F1 against the labeled
 
 ## File overview
 
-| File | Purpose |
-|---|---|
-| `main.py` | Entry point; reads claims, calls vision, writes output |
-| `vision.py` | VLM integration (Gemini, Groq, mock); image encoding; prompt |
-| `decide.py` | Rule layer; converts VLM perception into final output row |
-| `schema.py` | Enums, synonyms, normalization helpers |
-| `data.py` | CSV loaders and image path resolver |
-| `cache.py` | MD5-keyed JSON cache for VLM responses |
-| `evaluation/main.py` | Evaluation script |
-| `evaluation/evaluation_report.md` | Operational analysis |
+| File                              | Purpose                                                      |
+| --------------------------------- | ------------------------------------------------------------ |
+| `main.py`                         | Entry point; reads claims, calls vision, writes output       |
+| `vision.py`                       | VLM integration (Gemini, Groq, mock); image encoding; prompt |
+| `decide.py`                       | Rule layer; converts VLM perception into final output row    |
+| `schema.py`                       | Enums, synonyms, normalization helpers                       |
+| `data.py`                         | CSV loaders and image path resolver                          |
+| `cache.py`                        | MD5-keyed JSON cache for VLM responses                       |
+| `evaluation/main.py`              | Evaluation script                                            |
+| `evaluation/evaluation_report.md` | Operational analysis                                         |
 
 ## Caching
 
