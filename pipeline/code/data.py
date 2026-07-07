@@ -11,15 +11,6 @@ def load_claims(file_path="dataset/claims.csv"):
     return claims
 
 
-def load_history(file_path="dataset/user_history.csv"):
-    history = []
-    with open(file_path, "r") as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            history.append(row)
-    return history
-
-
 def load_requirements(file_path="dataset/evidence_requirements.csv"):
     requirements = []
     with open(file_path, "r") as f:
@@ -31,9 +22,7 @@ def load_requirements(file_path="dataset/evidence_requirements.csv"):
 
 def load_images(image_paths):
     images = []
-    print(image_paths)
     for raw in image_paths.split(";"):
-        print(raw)
         rel = raw.strip()
         if not rel:  # skip empty pieces
             continue

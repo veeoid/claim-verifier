@@ -1,6 +1,5 @@
 import csv
 import argparse
-import time
 
 from schema import OUTPUT_COLUMNS
 from data import (
@@ -14,21 +13,13 @@ from vision import analyze_claim
 from decide import decide
 
 
-def _guess_issue_family(text):
-    t = (text or "").lower()
-
-
 def run(claims_file, output_file, mode, limit=None):
     claims = load_claims(claims_file)
     if limit:
         claims = claims[:limit]
     history = load_history()
     requirements = load_requirements()
-    # print(
-    #     f"Loaded {len(claims)} claims, {len(history)} history items, and {len(requirements)} requirements"
-    # )
 
-    rows = []
     rows = []
     for curr_idx, claim in enumerate(claims, 1):
         images = load_images(claim["image_paths"])

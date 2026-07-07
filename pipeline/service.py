@@ -1,23 +1,32 @@
 import base64
+import binascii
 import hashlib
 import os
 import sys
 import tempfile
 from typing import Optional
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 # vision.py / decide.py use flat imports (from cache import ..., from schema
 # import ...), so pipeline/code must be on sys.path regardless of CWD.
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "code"))
+PIPELINE_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(PIPELINE_DIR, "code"))
 
 from vision import analyze_claim
 from decide import decide
+from data import load_requirements, select_requirements
 
 app = FastAPI()
 
 PIPELINE_MODE = os.getenv("PIPELINE_MODE", "groq")  # mock | gemini | groq
+
+# The web client sends no requirement_texts, so the sufficiency standard the
+# VLM judges against lives here, loaded once from the dataset.
+REQUIREMENTS = load_requirements(
+    os.path.join(PIPELINE_DIR, "dataset", "evidence_requirements.csv")
+)
 
 
 class AnalyzeImage(BaseModel):
@@ -41,20 +50,42 @@ class AnalyzeRequest(BaseModel):
     history: Optional[HistoryRow] = None
 
 
+@app.get("/health")
+def health():
+    return {"status": "ok", "mode": PIPELINE_MODE}
+
+
 @app.post("/analyze")
 def analyze(request: AnalyzeRequest):
     claim = {
         "user_id": request.user_id,
-        "claim_object": request.claim_object,
+        "claim_object": request.claim_object.strip().lower(),
         "user_claim": request.user_claim,
         "image_paths": request.image_paths,
     }
+
+    if not request.images:
+        return _no_image_result(claim)
+
+    requirement_texts = request.requirement_texts or select_requirements(
+        REQUIREMENTS, claim["claim_object"]
+    )
 
     temp_paths = []
     try:
         images = []
         for img in request.images:
-            raw = base64.b64decode(img.image_base64)
+            try:
+                raw = base64.b64decode(img.image_base64, validate=True)
+            except (binascii.Error, ValueError):
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"image {img.image_id!r} is not valid base64",
+                )
+            if not raw:
+                raise HTTPException(
+                    status_code=400, detail=f"image {img.image_id!r} is empty"
+                )
             fd, path = tempfile.mkstemp(suffix=".jpg")
             with os.fdopen(fd, "wb") as f:
                 f.write(raw)
@@ -70,15 +101,21 @@ def analyze(request: AnalyzeRequest):
             )
 
         history_row = request.history.model_dump() if request.history else None
-        perception = analyze_claim(
-            claim, images, request.requirement_texts, mode=PIPELINE_MODE
-        )
-        result = decide(claim, perception, history_row)
+        try:
+            perception = analyze_claim(
+                claim, images, requirement_texts, mode=PIPELINE_MODE
+            )
+            result = decide(claim, perception, history_row)
+        except Exception as e:
+            # Surface pipeline faults as a 5xx so the API marks the claim
+            # "failed" for retry instead of storing a fabricated verdict.
+            print(f"[service] analysis failed: {e!r}")
+            raise HTTPException(status_code=502, detail="analysis pipeline failed")
+
         # decide() emits "true"/"false" strings for the CSV pipeline; the API
         # client deserializes these fields as booleans.
         result["evidence_standard_met"] = result["evidence_standard_met"] == "true"
         result["valid_image"] = result["valid_image"] == "true"
-        print(f"analyze() returning {result}")
         return result
     finally:
         for path in temp_paths:
@@ -86,3 +123,22 @@ def analyze(request: AnalyzeRequest):
                 os.remove(path)
             except OSError:
                 pass
+
+
+def _no_image_result(claim):
+    return {
+        "user_id": claim["user_id"],
+        "image_paths": claim["image_paths"],
+        "user_claim": claim["user_claim"],
+        "claim_object": claim["claim_object"],
+        "evidence_standard_met": False,
+        "evidence_standard_met_reason": "No images were submitted with the claim.",
+        "risk_flags": "none",
+        "issue_type": "unknown",
+        "object_part": "unknown",
+        "claim_status": "not_enough_information",
+        "claim_status_justification": "No images were submitted, so the claim cannot be evaluated.",
+        "supporting_image_ids": "none",
+        "valid_image": False,
+        "severity": "unknown",
+    }
