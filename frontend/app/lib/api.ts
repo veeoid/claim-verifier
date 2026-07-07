@@ -52,9 +52,9 @@ export type ClaimRequest = {
 };
 
 export type ClaimImageResponse = {
-	id: number;
-	fileName?: string;
-	url?: string;
+	imageId: string;
+	path: string;
+	isSupporting: boolean;
 };
 
 export type ClaimResponse = {
@@ -96,6 +96,11 @@ export const api = {
 			method: "GET",
 		}),
 
+	getClaim: (id: number | string) =>
+		request<ClaimResponse>(`/api/claims/${id}`, {
+			method: "GET",
+		}),
+
 	createClaim: ({ description, claimObject, photos }: ClaimRequest) => {
 		const form = new FormData();
 		form.append("description", description);
@@ -109,5 +114,10 @@ export const api = {
 		});
 	},
 };
+
+export function imageUrl(path: string) {
+	const normalizedPath = path.replace(/^\/+/, "");
+	return `${API_URL}/${normalizedPath}`;
+}
 
 export { ApiError };

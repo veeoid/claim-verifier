@@ -269,6 +269,9 @@ export default function Dashboard() {
 										<tr
 											key={claim.id}
 											className="hover:bg-black/[0.02] transition-colors cursor-pointer"
+											onClick={() =>
+												router.push(`/dashboard/claim?id=${claim.id}`)
+											}
 										>
 											<td className="px-6 py-4 font-mono text-xs text-accent font-medium whitespace-nowrap">
 												{claim.id}
