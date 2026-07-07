@@ -17,7 +17,7 @@ from decide import decide
 
 app = FastAPI()
 
-PIPELINE_MODE = os.getenv("PIPELINE_MODE", "mock")  # mock | gemini | groq
+PIPELINE_MODE = os.getenv("PIPELINE_MODE", "groq")  # mock | gemini | groq
 
 
 class AnalyzeImage(BaseModel):
@@ -78,6 +78,7 @@ def analyze(request: AnalyzeRequest):
         # client deserializes these fields as booleans.
         result["evidence_standard_met"] = result["evidence_standard_met"] == "true"
         result["valid_image"] = result["valid_image"] == "true"
+        print(f"analyze() returning {result}")
         return result
     finally:
         for path in temp_paths:

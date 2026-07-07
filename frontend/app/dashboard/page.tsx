@@ -107,7 +107,11 @@ export default function Dashboard() {
 			claims.filter((c) => normalizeStatus(c.status) === status).length;
 		return [
 			{ label: "Total Claims", value: claims.length, icon: statIcons.total },
-			{ label: "Pending Review", value: count("pending"), icon: statIcons.pending },
+			{
+				label: "Pending Review",
+				value: count("pending"),
+				icon: statIcons.pending,
+			},
 			{ label: "Verified", value: count("verified"), icon: statIcons.verified },
 			{ label: "Flagged", value: count("flagged"), icon: statIcons.flagged },
 		];
@@ -171,7 +175,10 @@ export default function Dashboard() {
 			{/* Stats */}
 			<dl className="grid grid-cols-2 gap-4 lg:grid-cols-4">
 				{stats.map(({ label, value, icon }) => (
-					<div key={label} className="card card-hover flex flex-col gap-y-3 p-6">
+					<div
+						key={label}
+						className="card card-hover flex flex-col gap-y-3 p-6"
+					>
 						<div className="flex items-center justify-between">
 							<dt className="text-sm text-ink-soft">{label}</dt>
 							<span className="flex size-9 items-center justify-center rounded-lg bg-accent-soft">
@@ -244,10 +251,10 @@ export default function Dashboard() {
 											Claim ID
 										</th>
 										<th className="px-6 py-3 text-left text-xs font-medium text-ink-faint uppercase tracking-wide">
-											Type
+											Description
 										</th>
 										<th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-ink-faint uppercase tracking-wide">
-											Vehicle
+											Type
 										</th>
 										<th className="px-6 py-3 text-left text-xs font-medium text-ink-faint uppercase tracking-wide">
 											Status

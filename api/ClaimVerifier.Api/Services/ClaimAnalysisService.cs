@@ -32,7 +32,7 @@ public class ClaimAnalysisService : IClaimAnalysisService
 
         var result = await response.Content.ReadFromJsonAsync<AnalyzeResponse>()
             ?? throw new InvalidOperationException("Empty response from analysis service.");
-
+        
         return new ClaimAnalysisResult
         {
             EvidenceStandardMet = result.EvidenceStandardMet,

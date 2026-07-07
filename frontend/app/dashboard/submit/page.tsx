@@ -69,9 +69,7 @@ export default function SubmitClaimPage() {
 	}, []);
 
 	function addFiles(files: FileList | File[]) {
-		const images = Array.from(files).filter((f) =>
-			f.type.startsWith("image/"),
-		);
+		const images = Array.from(files).filter((f) => f.type.startsWith("image/"));
 		if (images.length === 0) return;
 		setPhotos((prev) => [
 			...prev,
@@ -238,8 +236,7 @@ export default function SubmitClaimPage() {
 					Submit a claim
 				</h1>
 				<p className="mt-1 text-sm text-ink-soft">
-					Describe what happened and attach photos — the AI takes it from
-					there.
+					Describe what happened and attach photos — the AI takes it from there.
 				</p>
 			</div>
 
@@ -252,16 +249,19 @@ export default function SubmitClaimPage() {
 						>
 							What are you claiming for?
 						</label>
-						<input
+						<select
 							id="claimObject"
 							name="claimObject"
-							type="text"
 							required
 							value={claimObject}
 							onChange={(e) => setClaimObject(e.target.value)}
-							placeholder="e.g. 2021 Honda Civic, iPhone 15 Pro, kitchen ceiling"
 							className="input-field"
-						/>
+						>
+							<option value="">Select an item</option>
+							<option value="car">Car</option>
+							<option value="laptop">Laptop</option>
+							<option value="package">Package</option>
+						</select>
 					</div>
 
 					<div>
@@ -320,9 +320,7 @@ export default function SubmitClaimPage() {
 								</svg>
 							</span>
 							<span className="text-sm text-ink-soft">
-								<span className="font-medium text-accent">
-									Click to upload
-								</span>{" "}
+								<span className="font-medium text-accent">Click to upload</span>{" "}
 								or drag and drop
 							</span>
 							<span className="text-xs text-ink-faint">

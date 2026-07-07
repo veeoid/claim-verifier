@@ -74,7 +74,8 @@ public class ClaimService : IClaimService
         {
             // Analysis failed or timed out — claim stays "pending" with images saved.
             // TODO: retry mechanism or a background job to re-attempt analysis.
-            
+            claim.Status = "failed";
+            await _db.SaveChangesAsync();
         }
 
         return ToResponse(claim);
