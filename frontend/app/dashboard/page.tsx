@@ -3,7 +3,14 @@ import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { api, ClaimResponse, Me } from "../lib/api";
-import { ClaimStatus, normalizeStatus, statusLabel, statusStyles } from "../lib/status";
+import {
+	ClaimStatus,
+	normalizeStatus,
+	statusLabel,
+	statusStyles,
+	activityLabel,
+	activityDot,
+} from "../lib/status";
 
 const statIcons = {
 	total: (
@@ -41,20 +48,13 @@ const statIcons = {
 			strokeLinejoin="round"
 		/>
 	),
-};
-
-const activityDot = {
-	verified: "bg-green-500",
-	pending: "bg-amber-400",
-	flagged: "bg-red-500",
-	failed: "bg-gray-400",
-};
-
-const activityAction = {
-	verified: "Verified automatically",
-	pending: "Awaiting review",
-	flagged: "Flagged for review",
-	failed: "Analysis failed — needs retry",
+	not_enough_information: (
+		<path
+			d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+		/>
+	),
 };
 
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
@@ -73,6 +73,29 @@ const todayFormatter = new Intl.DateTimeFormat("en-US", {
 	month: "long",
 	day: "numeric",
 });
+
+const shortDateFormatter = new Intl.DateTimeFormat("en-US", {
+	month: "short",
+	day: "numeric",
+});
+
+const EVIDENCE_TREND_DAYS = 14;
+
+// good/warning/critical — fixed status hues, validated against the light
+// card surface (never reused as categorical series colors).
+const RATE_COLORS = {
+	good: "#0ca30c",
+	warning: "#fab219",
+	critical: "#d03b3b",
+	noData: "#e8e5de",
+};
+
+function rateColor(rate: number | null) {
+	if (rate === null) return RATE_COLORS.noData;
+	if (rate >= 90) return RATE_COLORS.good;
+	if (rate >= 75) return RATE_COLORS.warning;
+	return RATE_COLORS.critical;
+}
 
 export default function Dashboard() {
 	const router = useRouter();
@@ -112,18 +135,57 @@ export default function Dashboard() {
 			{ label: "Verified", value: count("verified"), icon: statIcons.verified },
 			{ label: "Flagged", value: count("flagged"), icon: statIcons.flagged },
 			{ label: "Failed", value: count("failed"), icon: statIcons.failed },
+			{
+				label: "Not Enough Info",
+				value: count("not_enough_information"),
+				icon: statIcons.not_enough_information,
+			},
 		];
 	}, [claims]);
 
 	const recentActivity = useMemo(
 		() =>
-			[...claims]
-				.sort(
-					(a, b) =>
-						new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-				)
-				.slice(0, 6),
+			[...claims].sort(
+				(a, b) =>
+					new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+			),
 		[claims],
+	);
+
+	// claims already come back sorted newest-first from the API
+	const recentClaims = useMemo(() => claims.slice(0, 6), [claims]);
+
+	// Daily share of claims meeting the evidence standard, last EVIDENCE_TREND_DAYS days.
+	// `rate` is null (no bar color / "no claims") for days with no submissions,
+	// rather than fabricating a 0%.
+	const evidenceTrend = useMemo(() => {
+		const counts = new Map<string, { total: number; met: number }>();
+		for (const claim of claims) {
+			const key = new Date(claim.createdAt).toDateString();
+			const entry = counts.get(key) ?? { total: 0, met: 0 };
+			entry.total += 1;
+			if (claim.evidenceStandardMet) entry.met += 1;
+			counts.set(key, entry);
+		}
+
+		const today = new Date();
+		today.setHours(0, 0, 0, 0);
+
+		return Array.from({ length: EVIDENCE_TREND_DAYS }, (_, i) => {
+			const date = new Date(today);
+			date.setDate(date.getDate() - (EVIDENCE_TREND_DAYS - 1 - i));
+			const entry = counts.get(date.toDateString());
+			const total = entry?.total ?? 0;
+			return {
+				date,
+				total,
+				rate: total > 0 ? Math.round((entry!.met / total) * 100) : null,
+			};
+		});
+	}, [claims]);
+
+	const trendTickIndices = Array.from({ length: 5 }, (_, i) =>
+		Math.round((i * (EVIDENCE_TREND_DAYS - 1)) / 4),
 	);
 
 	if (checking) {
@@ -171,7 +233,7 @@ export default function Dashboard() {
 			</div>
 
 			{/* Stats */}
-			<dl className="grid grid-cols-2 gap-4 lg:grid-cols-5">
+			<dl className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-6">
 				{stats.map(({ label, value, icon }) => (
 					<div
 						key={label}
@@ -241,9 +303,9 @@ export default function Dashboard() {
 							</Link>
 						</div>
 					) : (
-						<div className="overflow-x-auto">
+						<div className="max-h-[420px] overflow-x-auto overflow-y-auto">
 							<table className="w-full text-sm">
-								<thead>
+								<thead className="sticky top-0 bg-paper">
 									<tr className="border-b border-line bg-black/[0.015]">
 										<th className="px-6 py-3 text-left text-xs font-medium text-ink-faint uppercase tracking-wide">
 											Claim ID
@@ -263,7 +325,7 @@ export default function Dashboard() {
 									</tr>
 								</thead>
 								<tbody className="divide-y divide-line">
-									{claims.map((claim) => (
+									{recentClaims.map((claim) => (
 										<tr
 											key={claim.id}
 											className="hover:bg-black/[0.02] transition-colors cursor-pointer"
@@ -312,23 +374,22 @@ export default function Dashboard() {
 							Activity will appear here once claims come in.
 						</p>
 					) : (
-						<ul className="divide-y divide-line">
+						<ul className="max-h-[420px] divide-y divide-line overflow-y-auto">
 							{recentActivity.map((claim) => {
-								const status = normalizeStatus(claim.status);
 								return (
 									<li
 										key={claim.id}
 										className="flex items-start gap-x-4 px-6 py-4"
 									>
 										<span
-											className={`mt-1 size-2 shrink-0 rounded-full ${activityDot[status]}`}
+											className={`mt-1 size-2 shrink-0 rounded-full ${activityDot(claim.status)}`}
 										/>
 										<div className="min-w-0 flex-1">
 											<p className="font-mono text-xs text-accent font-medium">
 												CLM-{claim.id}
 											</p>
 											<p className="mt-0.5 text-sm text-ink">
-												{activityAction[status]}
+												{activityLabel(claim.status)}
 											</p>
 											<p className="mt-1 text-xs text-ink-faint">
 												{dateFormatter.format(new Date(claim.createdAt))}
@@ -342,63 +403,76 @@ export default function Dashboard() {
 				</div>
 			</div>
 
-			{/* Confidence distribution */}
+			{/* Evidence standard trend */}
 			<div className="card p-6">
 				<div className="flex items-center justify-between mb-6">
 					<div>
 						<h2 className="text-sm font-semibold text-ink">
-							Confidence Distribution
+							Evidence Standard Rate
 						</h2>
 						<p className="mt-1 text-xs text-ink-faint">
-							AI confidence scores across all claims this month
+							Daily share of claims meeting the evidence standard, last{" "}
+							{EVIDENCE_TREND_DAYS} days
 						</p>
 					</div>
 					<div className="flex items-center gap-x-4 text-xs text-ink-soft">
 						<span className="flex items-center gap-x-1.5">
-							<span className="size-2 rounded-full bg-green-500" /> High (≥90%)
+							<span
+								className="size-2 rounded-full"
+								style={{ backgroundColor: RATE_COLORS.good }}
+							/>{" "}
+							High (≥90%)
 						</span>
 						<span className="flex items-center gap-x-1.5">
-							<span className="size-2 rounded-full bg-amber-400" /> Medium
-							(75–89%)
+							<span
+								className="size-2 rounded-full"
+								style={{ backgroundColor: RATE_COLORS.warning }}
+							/>{" "}
+							Medium (75–89%)
 						</span>
 						<span className="flex items-center gap-x-1.5">
-							<span className="size-2 rounded-full bg-red-400" /> Low (&lt;75%)
+							<span
+								className="size-2 rounded-full"
+								style={{ backgroundColor: RATE_COLORS.critical }}
+							/>{" "}
+							Low (&lt;75%)
+						</span>
+						<span className="flex items-center gap-x-1.5">
+							<span
+								className="size-2 rounded-full"
+								style={{ backgroundColor: RATE_COLORS.noData }}
+							/>{" "}
+							No claims
 						</span>
 					</div>
 				</div>
 				<div className="flex items-end gap-x-1.5 h-32">
-					{[
-						72, 85, 91, 78, 94, 88, 96, 63, 89, 97, 82, 91, 74, 88, 95, 79, 92,
-						86, 98, 71, 90, 83, 77, 93,
-					].map((v, i) => {
-						const color =
-							v >= 90
-								? "bg-green-500"
-								: v >= 75
-									? "bg-amber-400"
-									: "bg-red-400";
-						return (
+					{evidenceTrend.map((day, i) => (
+						<div
+							key={i}
+							className="group relative h-full flex-1 flex flex-col justify-end"
+						>
 							<div
-								key={i}
-								className="group relative h-full flex-1 flex flex-col justify-end"
-							>
-								<div
-									className={`w-full rounded-sm ${color} opacity-80 group-hover:opacity-100 transition-opacity`}
-									style={{ height: `${v}%` }}
-								/>
-								<div className="absolute -top-7 left-1/2 -translate-x-1/2 hidden group-hover:block bg-ink text-paper text-xs rounded px-1.5 py-0.5 whitespace-nowrap z-10">
-									{v}%
-								</div>
+								className="w-full rounded-t-sm opacity-80 transition-opacity group-hover:opacity-100"
+								style={{
+									height: day.rate !== null ? `${day.rate}%` : "3px",
+									backgroundColor: rateColor(day.rate),
+								}}
+							/>
+							<div className="absolute -top-7 left-1/2 -translate-x-1/2 hidden group-hover:block bg-ink text-paper text-xs rounded px-1.5 py-0.5 whitespace-nowrap z-10">
+								{day.rate !== null
+									? `${day.rate}% · ${day.total} claim${day.total === 1 ? "" : "s"}`
+									: "No claims"}
 							</div>
-						);
-					})}
+						</div>
+					))}
 				</div>
 				<div className="mt-3 flex justify-between text-xs text-ink-faint">
-					<span>Jun 1</span>
-					<span>Jun 8</span>
-					<span>Jun 15</span>
-					<span>Jun 22</span>
-					<span>Jun 26</span>
+					{trendTickIndices.map((idx) => (
+						<span key={idx}>
+							{shortDateFormatter.format(evidenceTrend[idx].date)}
+						</span>
+					))}
 				</div>
 			</div>
 		</div>
