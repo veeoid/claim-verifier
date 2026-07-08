@@ -43,5 +43,8 @@ public class AuthService : IAuthService
         return _tokenService.CreateToken(user);
     }
 
-    
+    public Task<User?> GetUserById(int userId)
+    {
+        return _db.Users.FirstOrDefaultAsync(u => u.Id == userId);
+    }
 }

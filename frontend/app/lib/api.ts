@@ -44,7 +44,7 @@ export type RegisterRequest = {
 	password: string;
 	confirmPassword: string;
 };
-export type Me = { userId: string; email: string };
+export type Me = { userId: string; email: string; createdAt: string | null };
 export type ClaimRequest = {
 	description: string;
 	claimObject: string;

@@ -59,10 +59,18 @@ public class AuthController : ControllerBase
 
     [Authorize]
     [HttpGet("me")]
-    public IActionResult Me()
+    public async Task<IActionResult> Me()
     {
         var email = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        return Ok(new { userId, email });
+
+        DateTime? createdAt = null;
+        if (int.TryParse(userId, out var id))
+        {
+            var user = await _authService.GetUserById(id);
+            createdAt = user?.CreatedAt;
+        }
+
+        return Ok(new { userId, email, createdAt });
     }
 }
