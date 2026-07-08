@@ -21,13 +21,15 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(
                 "http://localhost:3000",
-                "https://claim-verifier-hppo0f4pn-veeoids-projects.vercel.app"
+                "https://claim-verifier-hppo0f4pn-veeoids-projects.vercel.app",
+                "https://claim-verifier-one.vercel.app"
               )
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
     });
 });
+
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
