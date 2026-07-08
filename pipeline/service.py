@@ -9,23 +9,19 @@ from typing import Optional
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
-# vision.py / decide.py use flat imports (from cache import ..., from schema
-# import ...), so pipeline/code must be on sys.path regardless of CWD.
 PIPELINE_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.join(PIPELINE_DIR, "code"))
+CODE_DIR = os.path.join(PIPELINE_DIR, "code")
+sys.path.insert(0, CODE_DIR)
 
 from vision import analyze_claim
 from decide import decide
 from data import load_requirements, select_requirements
 
 app = FastAPI()
+PIPELINE_MODE = os.getenv("PIPELINE_MODE", "groq")
 
-PIPELINE_MODE = os.getenv("PIPELINE_MODE", "groq")  # mock | gemini | groq
-
-# The web client sends no requirement_texts, so the sufficiency standard the
-# VLM judges against lives here, loaded once from the dataset.
 REQUIREMENTS = load_requirements(
-    os.path.join(PIPELINE_DIR, "dataset", "evidence_requirements.csv")
+    os.path.join(CODE_DIR, "dataset", "evidence_requirements.csv")
 )
 
 
