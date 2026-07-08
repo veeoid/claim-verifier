@@ -67,16 +67,25 @@ public class ClaimService : IClaimService
             {
                 img.IsSupporting = result.SupportingImageIds.Contains(img.ImageId);
             }
-
-            await _db.SaveChangesAsync();
         }
         catch (Exception)
         {
-            // Analysis failed or timed out — claim stays "pending" with images saved.
+            // Analysis service errored or timed out. This is distinct from a real
+            // "not_enough_information" verdict, so it gets its own status rather than
+            // masquerading as a completed analysis. Same claim record either way.
             // TODO: retry mechanism or a background job to re-attempt analysis.
-            claim.Status = "failed";
-            await _db.SaveChangesAsync();
+            claim.Status = "analysis_failed";
+            claim.EvidenceStandardMet = null;
+            claim.EvidenceStandardMetReason = null;
+            claim.RiskFlags = null;
+            claim.IssueType = null;
+            claim.ObjectPart = null;
+            claim.ClaimStatusJustification = "Analysis could not be completed.";
+            claim.ValidImage = null;
+            claim.Severity = null;
         }
+
+        await _db.SaveChangesAsync();
 
         return ToResponse(claim);
     }

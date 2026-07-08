@@ -5,7 +5,7 @@ public class Claim
     public int Id { get; set; }
     public string Description { get; set; } = "";   // the user's typed claim text (pipeline's user_claim)
     public string ClaimObject { get; set; } = "car"; // car | laptop | package
-    public string Status { get; set; } = "pending";  // pending -> supported | contradicted | not_enough_information
+    public string Status { get; set; } = "pending";  // pending -> supported | contradicted | not_enough_information | analysis_failed
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     // Filled in once the pipeline responds — null until then

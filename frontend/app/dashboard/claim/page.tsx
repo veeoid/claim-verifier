@@ -1,20 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { api, ClaimResponse, imageUrl } from "../../lib/api";
-
-const statusStyles = {
-	verified: "bg-green-50 text-green-700 ring-1 ring-green-600/20",
-	pending: "bg-amber-50 text-amber-700 ring-1 ring-amber-600/20",
-	flagged: "bg-red-50 text-red-700 ring-1 ring-red-600/20",
-};
-
-function normalizeStatus(status: string) {
-	const s = status.toLowerCase();
-	return s === "verified" || s === "flagged" ? s : "pending";
-}
+import { normalizeStatus, statusLabel, statusStyles } from "../../lib/status";
 
 function formatValue(value: string | boolean | null | undefined) {
 	if (value === null || value === undefined) return "Not available";
@@ -22,7 +12,23 @@ function formatValue(value: string | boolean | null | undefined) {
 	return value;
 }
 
+function ClaimCardFallback() {
+	return (
+		<div className="rounded-2xl border border-line bg-paper p-8 text-sm text-ink-soft shadow-sm">
+			<p>Loading claim details...</p>
+		</div>
+	);
+}
+
 export default function ClaimCard() {
+	return (
+		<Suspense fallback={<ClaimCardFallback />}>
+			<ClaimCardContent />
+		</Suspense>
+	);
+}
+
+function ClaimCardContent() {
 	const searchParams = useSearchParams();
 	const claimId = searchParams.get("id");
 	const [claim, setClaim] = useState<ClaimResponse | null>(null);
@@ -99,7 +105,7 @@ export default function ClaimCard() {
 				<div
 					className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-medium ${statusStyles[status]}`}
 				>
-					{claim.status}
+					{statusLabel(claim.status)}
 				</div>
 			</div>
 
@@ -180,7 +186,7 @@ export default function ClaimCard() {
 							},
 							{ label: "Valid image", value: claim.validImage },
 							{ label: "Justification", value: claim.claimStatusJustification },
-							{ label: "Status", value: claim.status },
+							{ label: "Status", value: statusLabel(claim.status) },
 						].map((item) => (
 							<div
 								key={item.label}

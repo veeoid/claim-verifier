@@ -3,24 +3,12 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { api, ApiError, ClaimResponse, Me } from "../../lib/api";
+import { normalizeStatus, statusLabel, statusStyles } from "../../lib/status";
 
 type PhotoEntry = {
 	file: File;
 	previewUrl: string;
 };
-
-type ClaimStatus = "verified" | "pending" | "flagged";
-
-const statusStyles = {
-	verified: "bg-green-50 text-green-700 ring-1 ring-green-600/20",
-	pending: "bg-amber-50 text-amber-700 ring-1 ring-amber-600/20",
-	flagged: "bg-red-50 text-red-700 ring-1 ring-red-600/20",
-};
-
-function normalizeStatus(status: string): ClaimStatus {
-	const s = status.toLowerCase();
-	return s === "verified" || s === "flagged" ? s : "pending";
-}
 
 function ResultRow({ label, value }: { label: string; value: string }) {
 	return (
@@ -161,23 +149,33 @@ export default function SubmitClaimPage() {
 								aria-hidden="true"
 								className="size-7 text-accent"
 							>
-								<path
-									d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-									strokeLinecap="round"
-									strokeLinejoin="round"
-								/>
+								{status === "failed" ? (
+									<path
+										d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"
+										strokeLinecap="round"
+										strokeLinejoin="round"
+									/>
+								) : (
+									<path
+										d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+										strokeLinecap="round"
+										strokeLinejoin="round"
+									/>
+								)}
 							</svg>
 						</span>
 						<h1 className="font-serif text-xl font-medium tracking-tight text-ink">
 							Claim submitted
 						</h1>
 						<p className="mt-1 text-sm text-ink-soft">
-							Our AI has analyzed your claim. Here&apos;s the verdict.
+							{status === "failed"
+								? "We couldn't complete the analysis. Your claim was saved and can be resubmitted for review."
+								: "Our AI has analyzed your claim. Here's the verdict."}
 						</p>
 						<span
 							className={`mt-4 inline-flex items-center rounded-md px-3 py-1 text-sm font-medium ${statusStyles[status]}`}
 						>
-							{result.status}
+							{statusLabel(result.status)}
 						</span>
 					</div>
 

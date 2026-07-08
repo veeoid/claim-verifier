@@ -3,8 +3,7 @@ import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { api, ClaimResponse, Me } from "../lib/api";
-
-type ClaimStatus = "verified" | "pending" | "flagged";
+import { ClaimStatus, normalizeStatus, statusLabel, statusStyles } from "../lib/status";
 
 const statIcons = {
 	total: (
@@ -35,24 +34,27 @@ const statIcons = {
 			strokeLinejoin="round"
 		/>
 	),
-};
-
-const statusStyles = {
-	verified: "bg-green-50 text-green-700 ring-1 ring-green-600/20",
-	pending: "bg-amber-50 text-amber-700 ring-1 ring-amber-600/20",
-	flagged: "bg-red-50 text-red-700 ring-1 ring-red-600/20",
+	failed: (
+		<path
+			d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+		/>
+	),
 };
 
 const activityDot = {
 	verified: "bg-green-500",
 	pending: "bg-amber-400",
 	flagged: "bg-red-500",
+	failed: "bg-gray-400",
 };
 
 const activityAction = {
 	verified: "Verified automatically",
 	pending: "Awaiting review",
 	flagged: "Flagged for review",
+	failed: "Analysis failed — needs retry",
 };
 
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
@@ -71,11 +73,6 @@ const todayFormatter = new Intl.DateTimeFormat("en-US", {
 	month: "long",
 	day: "numeric",
 });
-
-function normalizeStatus(status: string): ClaimStatus {
-	const s = status.toLowerCase();
-	return s === "verified" || s === "flagged" ? s : "pending";
-}
 
 export default function Dashboard() {
 	const router = useRouter();
@@ -114,6 +111,7 @@ export default function Dashboard() {
 			},
 			{ label: "Verified", value: count("verified"), icon: statIcons.verified },
 			{ label: "Flagged", value: count("flagged"), icon: statIcons.flagged },
+			{ label: "Failed", value: count("failed"), icon: statIcons.failed },
 		];
 	}, [claims]);
 
@@ -173,7 +171,7 @@ export default function Dashboard() {
 			</div>
 
 			{/* Stats */}
-			<dl className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+			<dl className="grid grid-cols-2 gap-4 lg:grid-cols-5">
 				{stats.map(({ label, value, icon }) => (
 					<div
 						key={label}
@@ -286,7 +284,7 @@ export default function Dashboard() {
 												<span
 													className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${statusStyles[normalizeStatus(claim.status)]}`}
 												>
-													{claim.status}
+													{statusLabel(claim.status)}
 												</span>
 											</td>
 											<td className="hidden sm:table-cell px-6 py-4 text-ink-faint whitespace-nowrap text-xs">
