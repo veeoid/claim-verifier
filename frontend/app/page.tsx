@@ -73,8 +73,8 @@ export default function HomePage() {
 						Verify claims in seconds.
 					</h1>
 					<p className="mx-auto mt-6 max-w-xl text-lg/8 text-pretty text-ink-soft">
-						Upload a photo and let AI detect the damage, score the severity,
-						and flag the claim — no manual review.
+						Upload a photo and let AI detect the damage, score the severity, and
+						flag the claim — no manual review.
 					</p>
 					<div className="mt-10 flex items-center justify-center gap-x-4">
 						<Link href="/dashboard" className="btn-primary px-6 py-3">

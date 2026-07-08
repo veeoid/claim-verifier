@@ -243,13 +243,19 @@ export default function ReportsPage() {
 		});
 	}, [claims]);
 
-	const maxClaimObjectCount = Math.max(1, ...claimObjectCounts.map((c) => c.count));
+	const maxClaimObjectCount = Math.max(
+		1,
+		...claimObjectCounts.map((c) => c.count),
+	);
 	const maxRiskFlagCount = Math.max(1, ...riskFlagCounts.map((r) => r.count));
 
-	const verifiedCount = statusCounts.find((s) => s.key === "verified")?.count ?? 0;
-	const flaggedCount = statusCounts.find((s) => s.key === "flagged")?.count ?? 0;
+	const verifiedCount =
+		statusCounts.find((s) => s.key === "verified")?.count ?? 0;
+	const flaggedCount =
+		statusCounts.find((s) => s.key === "flagged")?.count ?? 0;
 	const evidenceMetCount = claims.filter((c) => c.evidenceStandardMet).length;
-	const highSeverityCount = severityCounts.find((s) => s.key === "high")?.count ?? 0;
+	const highSeverityCount =
+		severityCounts.find((s) => s.key === "high")?.count ?? 0;
 
 	if (checking) {
 		return (
@@ -323,7 +329,9 @@ export default function ReportsPage() {
 						</svg>
 					</span>
 					<div>
-						<p className="text-sm font-medium text-ink">Nothing to report yet</p>
+						<p className="text-sm font-medium text-ink">
+							Nothing to report yet
+						</p>
 						<p className="mt-1 text-sm text-ink-soft">
 							Submit a claim to start seeing report insights here.
 						</p>
@@ -342,10 +350,11 @@ export default function ReportsPage() {
 							</span>
 						</div>
 						<p className="font-serif text-lg leading-relaxed text-ink">
-							This report covers <strong className="text-accent">{total}</strong>{" "}
-							claim{total === 1 ? "" : "s"} submitted to date.{" "}
-							<strong className="text-accent">{pct(verifiedCount)}%</strong> were
-							verified against photo evidence, while{" "}
+							This report covers{" "}
+							<strong className="text-accent">{total}</strong> claim
+							{total === 1 ? "" : "s"} submitted to date.{" "}
+							<strong className="text-accent">{pct(verifiedCount)}%</strong>{" "}
+							were verified against photo evidence, while{" "}
 							<strong className="text-accent">{flaggedCount}</strong> claim
 							{flaggedCount === 1 ? " was" : "s were"} flagged for contradiction
 							and <strong className="text-accent">{highSeverityCount}</strong>{" "}
@@ -355,7 +364,9 @@ export default function ReportsPage() {
 
 					{/* Status distribution — single stacked bar instead of a bar chart */}
 					<div className="card p-6">
-						<h2 className="text-sm font-semibold text-ink">Status Distribution</h2>
+						<h2 className="text-sm font-semibold text-ink">
+							Status Distribution
+						</h2>
 						<p className="mt-1 text-xs text-ink-faint">
 							Every claim on record, grouped by verification outcome
 						</p>
@@ -383,7 +394,10 @@ export default function ReportsPage() {
 						</div>
 						<div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm">
 							{statusCounts.map(({ key, count }) => (
-								<span key={key} className="flex items-center gap-x-2 text-ink-soft">
+								<span
+									key={key}
+									className="flex items-center gap-x-2 text-ink-soft"
+								>
 									<span
 										className="size-2 rounded-full"
 										style={{ backgroundColor: STATUS_COLORS[key] }}
@@ -397,7 +411,9 @@ export default function ReportsPage() {
 
 					{/* Severity distribution — a waffle chart: one square per claim */}
 					<div className="card p-6">
-						<h2 className="text-sm font-semibold text-ink">Severity Distribution</h2>
+						<h2 className="text-sm font-semibold text-ink">
+							Severity Distribution
+						</h2>
 						<p className="mt-1 text-xs text-ink-faint">
 							One square per claim, colored by reported issue severity
 						</p>
@@ -413,7 +429,10 @@ export default function ReportsPage() {
 						</div>
 						<div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm">
 							{severityCounts.map(({ key, count }) => (
-								<span key={key} className="flex items-center gap-x-2 text-ink-soft">
+								<span
+									key={key}
+									className="flex items-center gap-x-2 text-ink-soft"
+								>
 									<span
 										className="size-2 rounded-[2px]"
 										style={{ backgroundColor: SEVERITY_COLORS[key] }}
@@ -428,7 +447,9 @@ export default function ReportsPage() {
 					{/* Claim object + risk flag breakdown, styled as ranked ledgers */}
 					<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
 						<div className="card p-6">
-							<h2 className="text-sm font-semibold text-ink">Claims by Object Type</h2>
+							<h2 className="text-sm font-semibold text-ink">
+								Claims by Object Type
+							</h2>
 							<p className="mt-1 text-xs text-ink-faint">
 								Which kinds of items are being claimed on
 							</p>
@@ -439,7 +460,9 @@ export default function ReportsPage() {
 											<span className="font-serif text-sm text-ink-faint tabular-nums">
 												{String(i + 1).padStart(2, "0")}
 											</span>
-											<span className="flex-1 text-sm text-ink">{titleCase(key)}</span>
+											<span className="flex-1 text-sm text-ink">
+												{titleCase(key)}
+											</span>
 											<span className="font-serif text-lg text-ink tabular-nums">
 												{count}
 											</span>
@@ -447,7 +470,9 @@ export default function ReportsPage() {
 										<div className="mt-2 h-px w-full bg-line">
 											<div
 												className="h-px bg-accent"
-												style={{ width: `${(count / maxClaimObjectCount) * 100}%` }}
+												style={{
+													width: `${(count / maxClaimObjectCount) * 100}%`,
+												}}
 											/>
 										</div>
 									</li>
@@ -472,7 +497,9 @@ export default function ReportsPage() {
 												<span className="font-serif text-sm text-ink-faint tabular-nums">
 													{String(i + 1).padStart(2, "0")}
 												</span>
-												<span className="flex-1 text-sm text-ink">{titleCase(key)}</span>
+												<span className="flex-1 text-sm text-ink">
+													{titleCase(key)}
+												</span>
 												<span className="font-serif text-lg text-ink tabular-nums">
 													{count}
 												</span>
@@ -480,7 +507,9 @@ export default function ReportsPage() {
 											<div className="mt-2 h-px w-full bg-line">
 												<div
 													className="h-px bg-accent"
-													style={{ width: `${(count / maxRiskFlagCount) * 100}%` }}
+													style={{
+														width: `${(count / maxRiskFlagCount) * 100}%`,
+													}}
 												/>
 											</div>
 										</li>
@@ -496,8 +525,8 @@ export default function ReportsPage() {
 							<h2 className="text-sm font-semibold text-ink">Monthly Ledger</h2>
 							<p className="mt-1 text-xs text-ink-faint">
 								Volume and evidence-standard performance, last{" "}
-								{MONTHLY_LEDGER_MONTHS} months — dot reflects the rate (green ≥90%,
-								amber 75–89%, red &lt;75%)
+								{MONTHLY_LEDGER_MONTHS} months — dot reflects the rate (green
+								≥90%, amber 75–89%, red &lt;75%)
 							</p>
 						</div>
 						<table className="w-full text-sm">
