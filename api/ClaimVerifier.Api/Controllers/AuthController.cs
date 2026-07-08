@@ -41,8 +41,8 @@ public class AuthController : ControllerBase
         Response.Cookies.Append("token", token, new CookieOptions
         {
             HttpOnly = true,
-            Secure = false, // localhost is http; flip to true once deployed on https
-            SameSite = SameSiteMode.Lax,
+            Secure = true,
+            SameSite = SameSiteMode.None,
             Expires = DateTimeOffset.UtcNow.AddDays(7)
         });
 
