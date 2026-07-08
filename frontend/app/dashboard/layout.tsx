@@ -48,10 +48,15 @@ function SidebarIcon({ d }: { d: string }) {
 export default function DashboardLayout({ children }: { children: ReactNode }) {
 	const pathname = usePathname();
 	const [user, setUser] = useState<Me | null>(null);
+	const [checking, setChecking] = useState(true);
 
 	useEffect(() => {
-		api.me().then(setUser).catch(null).finally();
-	});
+		api
+			.me()
+			.then(setUser)
+			.catch(() => setUser(null))
+			.finally(() => setChecking(false));
+	}, []);
 
 	return (
 		<div className="flex flex-1">
