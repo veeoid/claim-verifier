@@ -1,7 +1,3 @@
-from code.vision import analyze_claim
-from code.decide import decide
-from code.data import load_requirements, select_requirements
-
 import base64
 import binascii
 import hashlib
@@ -16,6 +12,10 @@ from pydantic import BaseModel
 PIPELINE_DIR = os.path.dirname(os.path.abspath(__file__))
 CODE_DIR = os.path.join(PIPELINE_DIR, "code")
 sys.path.insert(0, CODE_DIR)
+
+from vision import analyze_claim
+from decide import decide
+from data import load_requirements, select_requirements
 
 
 app = FastAPI()
