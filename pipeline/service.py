@@ -1,6 +1,6 @@
-from vision import analyze_claim
-from decide import decide
-from data import load_requirements, select_requirements
+from code.vision import analyze_claim
+from code.decide import decide
+from code.data import load_requirements, select_requirements
 
 import base64
 import binascii
